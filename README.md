@@ -1,6 +1,6 @@
 ## StyU-STD
 
-This repository contains the core implementation of 'StyU-STD'.
+This repository contains the core implementation of 'StyU-STD'. The related paper has been accepted by SMC 2025.
 
 ### Style-Diverse Sample Generation from Unlabeled Data
 
