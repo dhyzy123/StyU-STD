@@ -1,23 +1,23 @@
 # 🧠 StyU-STD
 
 **Official Implementation of _StyU-STD_ (Accepted at SMC 2025)**  
-A framework for **style-diverse sample generation from unlabeled speech data** and a **style-suppressed detection network**.
+A framework for **style-diverse sample generation from unlabeled speech data** and a **style suppressed detection network**.
 
 ---
 
-## 🎯 Overview: Style-Diverse Sample Generation from Unlabeled Data
+## 🎯 Overview: Style-Diverse Sample Generation from Unlabeled Data for Query-by-Example Spoken Term Detection
 
 StyU-STD enables training a speech detection model **without any labeled data**, by automatically generating style-varied positive and negative samples. It consists of:
 
 - **Unlabeled Sample Constructor**  
   Dynamically generates training samples with varying speaker styles and speaking states.
 
-- **Style-Suppressed Detection Network**  
+- **Style Suppressed Detection Network**  
   Learns to recognize speaker-independent speech content while suppressing style variations.
 
 ---
 
-## 📁 Module Descriptions
+## 📁 Sample Generation Module Descriptions
 
 ### 🔹 `UnlabeledData.py`
 
