@@ -1,25 +1,85 @@
-## StyU-STD
+# 🧠 StyU-STD
 
-This repository contains the core implementation of 'StyU-STD'. The related paper has been accepted by SMC 2025.
+**Official Implementation of _StyU-STD_ (Accepted at SMC 2025)**  
+A framework for **style-diverse sample generation from unlabeled speech data** and a **style-suppressed detection network**.
 
-### Style-Diverse Sample Generation from Unlabeled Data
+---
 
-#### 🔹 UnlabeledData.py
+## 🎯 Overview: Style-Diverse Sample Generation from Unlabeled Data
 
-UnlabeledSTD: Generates positive training samples by randomly clipping segments from unlabeled speech files.
+StyU-STD enables training a speech detection model **without any labeled data**, by automatically generating style-varied positive and negative samples. It consists of:
 
-STDDataConstructor--forword method: Implements Speaker Transformation (ST) and Speaking State Emulation (SSE). ST can be implemented fixed for q, or it can be randomized to choose whether it is implemented for q or s, although in the paper we only show one form. SSE techniques include: RR: random resampling to simulate rhythm; CP: random cropping to simulate omissions; NS: adding random noise to simulate noise. If config is true, implement, otherwise skip. 
+- **Unlabeled Sample Constructor**  
+  Dynamically generates training samples with varying speaker styles and speaking states.
 
-STDDataConstructor--sys method: Manages random selection of negative samples and applies speaker transformation. If the ST parameter is enabled (True), it performs both random negative sample selection and speaker transformation; if disabled (False), it only selects random negative samples.
+- **Style-Suppressed Detection Network**  
+  Learns to recognize speaker-independent speech content while suppressing style variations.
 
-#### 🔹 data_gen.py
+---
 
-FreeVC (ST): Utilizes the FreeVC framework, in which parameters are initialized with pre-trained weights and kept frozen, enabling robust and flexible speaker transformation, which in turn facilitates more effective training of the subsequent detection network.
+## 📁 Module Descriptions
 
-### Style Suppressed Convolutional Network
+### 🔹 `UnlabeledData.py`
 
-#### 🔹 STD_Model.py
+#### `UnlabeledSTD`
+Generates **positive training samples** by randomly clipping segments from unlabeled speech files.
 
-STD_Model: Defines the core detection model designed for training on generated sample data. The model emphasizes content detection while suppressing style variations.
+#### `STDDataConstructor.forward()`
 
-MatrixCosineSimilarity: Multiplys feat_s by feat_q or feat_q by feat_s is feasible. It is more common to multiply feat_q by feat_s, as is done in the paper. In fact, multiplying feat_s by feat_q is also a valid alternative, and the results are generally similar.
+Implements the two key augmentation techniques:
+
+- **Speaker Transformation (ST)**:
+  - Transforms speaker identity to diversify style.
+  - Can be fixed to `q`, or randomly applied to `q` or `s`.
+  - _(Only the fixed-`q` version is used in the paper.)_
+
+- **Speaking State Emulation (SSE)**:
+  - `RR` – Random Resampling: simulates rhythm changes.
+  - `CP` – Cropping: simulates speech omissions.
+  - `NS` – Noise: adds random noise to simulate environmental disturbance.
+
+All techniques are conditionally applied based on configuration flags.
+
+#### `STDDataConstructor.sys()`
+
+Handles **negative sample generation**:
+
+- If `ST=True`:
+  - Selects a random negative sample.
+  - Applies speaker transformation to increase variation.
+- If `ST=False`:
+  - Only performs negative sampling without transformation.
+
+---
+
+### 🔹 `data_gen.py`
+
+#### `FreeVC (Speaker Transformation)`
+
+Utilizes **FreeVC**, a high-quality voice conversion model:
+
+- Pre-trained and **weights frozen** during use.
+- Enables **robust and flexible speaker transformation**.
+- Facilitates better training of the downstream detection network.
+
+---
+
+## 🧩 Detection Model
+
+### 🔹 `STD_Model.py`
+
+#### `STD_Model`
+
+The **core detection network** designed to:
+
+- Detect speaker-invariant **speech content**.
+- Suppress variations introduced by speaker identity and speaking states.
+
+Trains entirely on synthesized positive and negative samples.
+
+#### `MatrixCosineSimilarity`
+
+Computes cosine similarity between features:
+
+- Commonly uses `feat_q × feat_s`, as shown in the paper.
+- Alternatively, `feat_s × feat_q` is also valid and yields similar results.
